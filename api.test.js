@@ -1,20 +1,34 @@
 const axios = require('axios');
+const testData = require('./data');
+const config = require('./config');
 
 test('Test API endpoint', async () => {
   // Set up the request parameters
-  const requestData = {
-    username: 'dickydompetkilat',
-    password: 'Dicky123',
+  const {username,password} = testData.login;
+  const requestData={
+    username,
+    password,
   };
+  
+  if (!requestData.username || !requestData.password) {
+    const emptyFieldResponse = {
+      status: '98',
+      message: 'Invalid Request Format',
+      data: {},
+    };
+
+    // Make sure to use the appropriate API for empty fields
+    expect(response.status).toBe(200); // Assuming status code for invalid request is 200
+    expect(response.data).toEqual(emptyFieldResponse);
+    return;
+  }
 
   const requestConfig = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: config.requestHeaders,
   };
 
   // Make the HTTP request
-  const response = await axios.post('https://ws-dk.dompetkilat.dev/v1/admin/login', requestData, requestConfig);
+  const response = await axios.post(config.endpointLogin, requestData, requestConfig);
 
   // Validate the response
   expect(response.status).toBe(200); // Adjust this status code based on your API's response status
@@ -23,7 +37,7 @@ test('Test API endpoint', async () => {
     message: 'Success',
     data: {
       access_code: expect.any(String),
-      username: 'dickydompetkilat',
+      username: requestData.username,
     },
   });
 });
